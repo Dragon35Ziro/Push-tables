@@ -1,0 +1,110 @@
+﻿<Window x:Class="TablePlacer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Table Planner" Height="800" Width="1000">
+    <Window.Resources>
+        <Style TargetType="Border">
+            <Style.Triggers>
+                <Trigger Property="IsMouseDirectlyOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Левая панель управления -->
+        <StackPanel Grid.Column="0" Margin="0 0 10 0">
+            <GroupBox Header="Параметры комнаты" Padding="5">
+                <StackPanel>
+                    <TextBlock Text="Ширина комнаты"/>
+                    <TextBox x:Name="tbWidth" Text="10" Margin="0 2"/>
+                    <TextBlock Text="Высота комнаты" Margin="0 5"/>
+                    <TextBox x:Name="tbHeight" Text="10" Margin="0 2"/>
+                    <TextBlock Text="Координата X входа" Margin="0 5"/>
+                    <TextBox x:Name="tbEntranceX" Text="0" Margin="0 2"/>
+                    <TextBlock Text="Координата Y входа" Margin="0 5"/>
+                    <TextBox x:Name="tbEntranceY" Text="0" Margin="0 2"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Типы столов" Margin="0 10" Padding="5">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <CheckBox x:Name="cbType1" Content="Тип 1 (2x2)" VerticalAlignment="Center"/>
+                        <TextBox x:Name="tbCount1" Width="60" Margin="10 0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <CheckBox x:Name="cbType2" Content="Тип 2 (2x1)" VerticalAlignment="Center"/>
+                        <TextBox x:Name="tbCount2" Width="60" Margin="10 0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <CheckBox x:Name="cbType3" Content="Тип 3 (1x2)" VerticalAlignment="Center"/>
+                        <TextBox x:Name="tbCount3" Width="60" Margin="10 0"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Редактирование" Margin="0,10,0.4,10" Padding="5" Height="105">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <RadioButton x:Name="rbPlaceTables" Content="Разм" 
+                                    GroupName="Tools" IsChecked="True"/>
+                        <RadioButton x:Name="rbAddWalls" Content="Стены (+)" 
+                                    GroupName="Tools" Margin="10 0"/>
+                        <RadioButton x:Name="rbRemoveWalls" Content="Стены (-)" 
+                                    GroupName="Tools"/>
+                        <RadioButton x:Name="rbMoveTables" Content="Перемещение" 
+                                    GroupName="Tools" Margin="10 0"/>
+                    </StackPanel>
+                    <Button Content="Изменить размер" 
+                            Click="BtnResizeRoom_Click" Margin="0,5,-0.2,5" Padding="5" Height="31"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Масштаб" Margin="0 10" Padding="5">
+                <StackPanel Orientation="Horizontal">
+                    <Slider x:Name="sliderZoom" 
+                            Minimum="0.2" Maximum="3" Value="1" 
+                            Width="150" Margin="5 0"
+                            TickFrequency="0.2" 
+                            IsSnapToTickEnabled="True"/>
+                    <TextBlock Text="{Binding Value, ElementName=sliderZoom, StringFormat={}{0:F1}x}"
+                               Margin="10 0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </GroupBox>
+
+            <Button Content="Начать размещение" Click="BtnStart_Click" 
+                    Margin="0 15" Padding="10 3" FontWeight="Bold"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0 10">
+                <Button Content="Сохранить план" Click="BtnSave_Click" 
+                        Padding="8 3" Margin="0 0 5 0"/>
+                <Button Content="Загрузить план" Click="BtnLoad_Click" 
+                        Padding="8 3"/>
+            </StackPanel>
+
+            <TextBlock x:Name="tbStatus" Margin="5" Foreground="Red" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- Область отрисовки -->
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Canvas x:Name="canvasRoom" Background="#FFF0F0F0"
+                        RenderTransformOrigin="0,0"
+                        MouseLeftButtonDown="CanvasRoom_MouseLeftButtonDown"
+                        MouseMove="CanvasRoom_MouseMove"
+                        MouseLeftButtonUp="CanvasRoom_MouseLeftButtonUp">
+                    <Canvas.RenderTransform>
+                        <ScaleTransform ScaleX="{Binding Value, ElementName=sliderZoom}"
+                                        ScaleY="{Binding Value, ElementName=sliderZoom}"/>
+                    </Canvas.RenderTransform>
+                </Canvas>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
